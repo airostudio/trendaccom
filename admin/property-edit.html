@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New Property - TrendAccom Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <style>
+        :root {
+            --sidebar-width: 260px;
+            --topbar-height: 64px;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --primary-light: #eff6ff;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --green-500: #22c55e;
+            --green-100: #dcfce7;
+            --red-500: #ef4444;
+            --red-100: #fee2e2;
+            --orange-500: #f97316;
+            --orange-100: #ffedd5;
+            --radius: 8px;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --transition: all 0.2s ease;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        /* ============ SIDEBAR ============ */
+        .admin-sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--gray-900);
+            color: #fff;
+            z-index: 1000;
+            overflow-y: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .admin-sidebar.collapsed {
+            transform: translateX(calc(-1 * var(--sidebar-width)));
+        }
+
+        .sidebar-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 700;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .sidebar-badge {
+            background: var(--primary);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-nav {
+            padding: 16px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-title {
+            padding: 8px 24px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray-500);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 24px;
+            color: var(--gray-400);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-link.active {
+            color: #fff;
+            background: rgba(37,99,235,0.15);
+            border-left-color: var(--primary);
+        }
+
+        .nav-link svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* ============ MAIN LAYOUT ============ */
+        .admin-main {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin-left 0.3s ease;
+        }
+
+        .admin-main.expanded {
+            margin-left: 0;
+        }
+
+        /* ============ TOP BAR ============ */
+        .admin-topbar {
+            position: sticky;
+            top: 0;
+            height: var(--topbar-height);
+            background: #fff;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            z-index: 500;
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            color: var(--gray-600);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-toggle:hover {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        .sidebar-toggle svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--gray-500);
+        }
+
+        .breadcrumb a {
+            color: var(--gray-500);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--primary);
+        }
+
+        .breadcrumb .separator {
+            color: var(--gray-300);
+        }
+
+        .breadcrumb .current {
+            color: var(--gray-800);
+            font-weight: 500;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ============ CONTENT ============ */
+        .admin-content {
+            padding: 24px;
+            max-width: 1200px;
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .page-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-size: 14px;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-ghost:hover {
+            background: var(--gray-50);
+            border-color: var(--gray-400);
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 13px;
+        }
+
+        .btn-danger-outline {
+            background: transparent;
+            color: var(--red-500);
+            border: 1px solid var(--red-500);
+        }
+
+        .btn-danger-outline:hover {
+            background: var(--red-100);
+        }
+
+        /* ============ TABS ============ */
+        .tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 2px solid var(--gray-200);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-500);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: var(--transition);
+            white-space: nowrap;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .tab:hover {
+            color: var(--gray-700);
+        }
+
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* ============ TAB PANELS ============ */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* ============ FORM STYLES ============ */
+        .form-card {
+            background: #fff;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .form-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-row.three-col {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+
+        .form-row.four-col {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            color: var(--gray-800);
+            background: #fff;
+            transition: var(--transition);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+
+        /* ============ ROOM TYPE CARD ============ */
+        .room-type-card {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+
+        .room-type-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .room-type-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .room-type-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* ============ SEASONAL RATES ============ */
+        .seasonal-rate-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr auto;
+            gap: 12px;
+            align-items: end;
+            margin-bottom: 12px;
+        }
+
+        /* ============ AMENITIES ============ */
+        .amenity-group {
+            margin-bottom: 24px;
+        }
+
+        .amenity-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .amenity-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 12px;
+        }
+
+        .amenity-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+        }
+
+        .amenity-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .amenity-checkbox:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .amenity-checkbox input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .amenity-checkbox span {
+            font-size: 14px;
+            color: var(--gray-700);
+        }
+
+        /* ============ PHOTO UPLOAD ============ */
+        .upload-zone {
+            border: 2px dashed var(--gray-300);
+            border-radius: var(--radius);
+            padding: 60px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .upload-zone svg {
+            width: 48px;
+            height: 48px;
+            color: var(--gray-400);
+            margin-bottom: 16px;
+        }
+
+        .upload-zone-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 4px;
+        }
+
+        .upload-zone-subtitle {
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .upload-zone-browse {
+            color: var(--primary);
+            font-weight: 500;
+            text-decoration: underline;
+        }
+
+        /* ============ TOGGLES ============ */
+        .toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gray-300);
+            border-radius: 24px;
+            transition: var(--transition);
+        }
+
+        .toggle-slider:before {
+            content: '';
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: #fff;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--primary);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* ============ ICAL SECTION ============ */
+        .ical-import-row {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .ical-import-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .export-url-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            padding: 10px 14px;
+        }
+
+        .export-url-box code {
+            flex: 1;
+            font-size: 13px;
+            color: var(--gray-600);
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--gray-500);
+            padding: 4px;
+            border-radius: 4px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .copy-btn:hover {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .connected-feed {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 14px 16px;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            margin-bottom: 10px;
+        }
+
+        .connected-feed:last-child {
+            margin-bottom: 0;
+        }
+
+        .feed-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .feed-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-800);
+        }
+
+        .feed-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 2px 10px;
+            border-radius: 20px;
+        }
+
+        .feed-status.active {
+            background: var(--green-100);
+            color: #16a34a;
+        }
+
+        .feed-status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .feed-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1024px) {
+            .room-type-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+            .seasonal-rate-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .admin-sidebar {
+                transform: translateX(calc(-1 * var(--sidebar-width)));
+            }
+            .admin-sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            .admin-main {
+                margin-left: 0;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            .form-row.three-col,
+            .form-row.four-col {
+                grid-template-columns: 1fr 1fr;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+            .room-type-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============ SIDEBAR ============ -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <div class="sidebar-header">
+            <a href="index.html" class="sidebar-logo">TrendAccom</a>
+            <span class="sidebar-badge">Admin</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <!-- MAIN -->
+            <div class="nav-section">
+                <div class="nav-section-title">Main</div>
+
+                <a href="index.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                    </svg>
+                    Dashboard
+                </a>
+
+                <a href="properties.html" class="nav-link active">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="7" height="7"></rect>
+                        <rect x="14" y="3" width="7" height="7"></rect>
+                        <rect x="3" y="14" width="7" height="7"></rect>
+                        <rect x="14" y="14" width="7" height="7"></rect>
+                    </svg>
+                    Properties
+                </a>
+
+                <a href="bookings.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+                        <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                    </svg>
+                    Bookings
+                </a>
+
+                <a href="calendar.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    Calendar
+                </a>
+            </div>
+
+            <!-- MANAGEMENT -->
+            <div class="nav-section">
+                <div class="nav-section-title">Management</div>
+
+                <a href="rates.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="1" x2="12" y2="23"></line>
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    Rates &amp; Pricing
+                </a>
+
+                <a href="guests.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Guests
+                </a>
+
+                <a href="#" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    Reviews
+                </a>
+            </div>
+
+            <!-- INTEGRATIONS -->
+            <div class="nav-section">
+                <div class="nav-section-title">Integrations</div>
+
+                <a href="ical-sync.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    iCal Sync
+                </a>
+
+                <a href="payments.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                    Stripe Connect
+                </a>
+            </div>
+
+            <!-- SYSTEM -->
+            <div class="nav-section">
+                <div class="nav-section-title">System</div>
+
+                <a href="settings.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"></circle>
+                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                    </svg>
+                    Settings
+                </a>
+
+                <a href="reports.html" class="nav-link">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"></line>
+                        <line x1="12" y1="20" x2="12" y2="4"></line>
+                        <line x1="6" y1="20" x2="6" y2="14"></line>
+                    </svg>
+                    Reports
+                </a>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <div class="admin-main" id="adminMain">
+
+        <!-- TOP BAR -->
+        <header class="admin-topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <nav class="breadcrumb">
+                    <a href="index.html">Dashboard</a>
+                    <span class="separator">&rsaquo;</span>
+                    <a href="properties.html">Properties</a>
+                    <span class="separator">&rsaquo;</span>
+                    <span class="current">Add New Property</span>
+                </nav>
+            </div>
+            <div class="topbar-right">
+                <div class="user-avatar" title="Admin User">AU</div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="admin-content">
+
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Add New Property</h1>
+                <div class="page-actions">
+                    <button class="btn btn-ghost" type="button">Save Draft</button>
+                    <button class="btn btn-primary" type="button">Publish</button>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tabs" id="propertyTabs">
+                <button class="tab active" data-tab="basic-info">Basic Info</button>
+                <button class="tab" data-tab="rooms-rates">Rooms &amp; Rates</button>
+                <button class="tab" data-tab="amenities">Amenities</button>
+                <button class="tab" data-tab="photos">Photos</button>
+                <button class="tab" data-tab="policies">Policies</button>
+                <button class="tab" data-tab="ical">iCal</button>
+            </div>
+
+            <!-- ============ BASIC INFO TAB ============ -->
+            <div class="tab-panel active" id="basic-info">
+                <div class="form-card">
+                    <h3 class="form-card-title">Property Details</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="propertyName">Property Name</label>
+                            <input type="text" class="form-input" id="propertyName" placeholder="e.g. Coastal View Hotel">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="propertyType">Property Type</label>
+                            <select class="form-select" id="propertyType">
+                                <option value="">Select type...</option>
+                                <option value="hotel">Hotel</option>
+                                <option value="motel">Motel</option>
+                                <option value="apartment">Apartment</option>
+                                <option value="pub-inn">Pub/Inn</option>
+                                <option value="caravan-park">Caravan Park</option>
+                                <option value="holiday-park">Holiday Park</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="propertyDesc">Description</label>
+                        <textarea class="form-textarea" id="propertyDesc" placeholder="Describe the property, its location, and key features..."></textarea>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3 class="form-card-title">Address</h3>
+
+                    <div class="form-group">
+                        <label class="form-label" for="street">Street Address</label>
+                        <input type="text" class="form-input" id="street" placeholder="123 Main Street">
+                    </div>
+
+                    <div class="form-row four-col">
+                        <div class="form-group">
+                            <label class="form-label" for="city">City</label>
+                            <input type="text" class="form-input" id="city" placeholder="Sydney">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="state">State</label>
+                            <input type="text" class="form-input" id="state" placeholder="NSW">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="postcode">Postcode</label>
+                            <input type="text" class="form-input" id="postcode" placeholder="2000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="country">Country</label>
+                            <select class="form-select" id="country">
+                                <option value="AU" selected>Australia</option>
+                                <option value="NZ">New Zealand</option>
+                                <option value="US">United States</option>
+                                <option value="GB">United Kingdom</option>
+                                <option value="CA">Canada</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3 class="form-card-title">Contact Information</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="contactEmail">Contact Email</label>
+                            <input type="email" class="form-input" id="contactEmail" placeholder="info@property.com.au">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="contactPhone">Contact Phone</label>
+                            <input type="tel" class="form-input" id="contactPhone" placeholder="+61 2 1234 5678">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ ROOMS & RATES TAB ============ -->
+            <div class="tab-panel" id="rooms-rates">
+                <div class="form-card">
+                    <h3 class="form-card-title">Room Types</h3>
+
+                    <div class="room-type-card">
+                        <div class="room-type-header">
+                            <span class="room-type-title">Room Type #1</span>
+                            <button class="btn btn-danger-outline btn-sm" type="button">Remove</button>
+                        </div>
+                        <div class="room-type-grid">
+                            <div class="form-group">
+                                <label class="form-label">Room Name</label>
+                                <input type="text" class="form-input" placeholder="e.g. Deluxe King Room" value="Deluxe King Room">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Max Guests</label>
+                                <input type="number" class="form-input" placeholder="2" value="2" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Beds</label>
+                                <input type="number" class="form-input" placeholder="1" value="1" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Bathrooms</label>
+                                <input type="number" class="form-input" placeholder="1" value="1" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Base Rate / Night</label>
+                                <input type="number" class="form-input" placeholder="150.00" value="189.00" min="0" step="0.01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-input" placeholder="10" value="12" min="1">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-ghost" type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Room Type
+                    </button>
+                </div>
+
+                <div class="form-card">
+                    <h3 class="form-card-title">Seasonal Rates</h3>
+
+                    <div class="seasonal-rate-row">
+                        <div class="form-group">
+                            <label class="form-label">Season Name</label>
+                            <input type="text" class="form-input" placeholder="e.g. Peak Summer">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Date</label>
+                            <input type="date" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Rate Modifier (%)</label>
+                            <input type="number" class="form-input" placeholder="e.g. 25" min="-100" max="200">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">&nbsp;</label>
+                            <button class="btn btn-danger-outline btn-sm" type="button">Remove</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-ghost" type="button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="12" y1="5" x2="12" y2="19"></line>
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Season
+                    </button>
+                </div>
+            </div>
+
+            <!-- ============ AMENITIES TAB ============ -->
+            <div class="tab-panel" id="amenities">
+                <div class="form-card">
+                    <h3 class="form-card-title">Property Amenities</h3>
+
+                    <div class="amenity-group">
+                        <h4 class="amenity-group-title">General</h4>
+                        <div class="amenity-grid">
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="wifi">
+                                <span>WiFi</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="parking">
+                                <span>Parking</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="pool">
+                                <span>Pool</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="gym">
+                                <span>Gym</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="air-conditioning">
+                                <span>Air Conditioning</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="amenity-group">
+                        <h4 class="amenity-group-title">Room</h4>
+                        <div class="amenity-grid">
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="tv">
+                                <span>TV</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="kitchen">
+                                <span>Kitchen</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="minibar">
+                                <span>Minibar</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="balcony">
+                                <span>Balcony</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="amenity-group">
+                        <h4 class="amenity-group-title">Services</h4>
+                        <div class="amenity-grid">
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="restaurant">
+                                <span>Restaurant</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="room-service">
+                                <span>Room Service</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="laundry">
+                                <span>Laundry</span>
+                            </label>
+                            <label class="amenity-checkbox">
+                                <input type="checkbox" name="amenity" value="concierge">
+                                <span>Concierge</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ PHOTOS TAB ============ -->
+            <div class="tab-panel" id="photos">
+                <div class="form-card">
+                    <h3 class="form-card-title">Property Photos</h3>
+
+                    <div class="upload-zone" id="uploadZone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                        <p class="upload-zone-title">Drag &amp; drop images here or <span class="upload-zone-browse">click to browse</span></p>
+                        <p class="upload-zone-subtitle">Supports JPG, PNG, WebP. Max 10MB per file.</p>
+                        <input type="file" id="fileInput" multiple accept="image/*" style="display: none;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ POLICIES TAB ============ -->
+            <div class="tab-panel" id="policies">
+                <div class="form-card">
+                    <h3 class="form-card-title">Check-in / Check-out</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="checkinTime">Check-in Time</label>
+                            <input type="time" class="form-input" id="checkinTime" value="14:00">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="checkoutTime">Check-out Time</label>
+                            <input type="time" class="form-input" id="checkoutTime" value="10:00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3 class="form-card-title">Cancellation &amp; Stay Limits</h3>
+
+                    <div class="form-row three-col">
+                        <div class="form-group">
+                            <label class="form-label" for="cancellationPolicy">Cancellation Policy</label>
+                            <select class="form-select" id="cancellationPolicy">
+                                <option value="flexible">Flexible</option>
+                                <option value="moderate" selected>Moderate</option>
+                                <option value="strict">Strict</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="minStay">Minimum Stay (nights)</label>
+                            <input type="number" class="form-input" id="minStay" value="1" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="maxStay">Maximum Stay (nights)</label>
+                            <input type="number" class="form-input" id="maxStay" value="30" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3 class="form-card-title">Property Policies</h3>
+
+                    <div class="toggle-row">
+                        <span class="toggle-label">Pets Allowed</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="petPolicy">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="toggle-row">
+                        <span class="toggle-label">Smoking Allowed</span>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="smokingPolicy">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3 class="form-card-title">Deposit</h3>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="depositPercent">Deposit Percentage (%)</label>
+                            <input type="number" class="form-input" id="depositPercent" value="20" min="0" max="100" step="5">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============ ICAL TAB ============ -->
+            <div class="tab-panel" id="ical">
+                <div class="form-card">
+                    <h3 class="form-card-title">Import Calendar</h3>
+                    <p style="font-size: 13px; color: var(--gray-500); margin-bottom: 16px;">Add an external iCal feed URL to sync availability from other platforms.</p>
+
+                    <div class="ical-import-row">
+                        <div class="form-group">
+                            <label class="form-label" for="icalUrl">iCal Feed URL</label>
+                            <input type="url" class="form-input" id="icalUrl" placeholder="https://www.airbnb.com/calendar/ical/XXXXXXX.ics">
+                        </div>
+                        <button class="btn btn-primary" type="button" style="margin-bottom: 16px;">Add Feed</button>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3 class="form-card-title">Export Calendar</h3>
+                    <p style="font-size: 13px; color: var(--gray-500); margin-bottom: 16px;">Use this URL to share your property's availability with other platforms.</p>
+
+                    <div class="export-url-box">
+                        <code>https://trendaccom.com.au/ical/export/property-12345.ics</code>
+                        <button class="copy-btn" type="button" title="Copy URL" onclick="navigator.clipboard.writeText('https://trendaccom.com.au/ical/export/property-12345.ics')">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <h3 class="form-card-title">Connected Feeds</h3>
+
+                    <div class="connected-feed">
+                        <div class="feed-info">
+                            <span class="feed-name">Airbnb</span>
+                            <span class="feed-status active">
+                                <span class="feed-status-dot"></span>
+                                Active
+                            </span>
+                        </div>
+                        <div class="feed-actions">
+                            <button class="btn btn-ghost btn-sm" type="button">Sync Now</button>
+                            <button class="btn btn-danger-outline btn-sm" type="button">Remove</button>
+                        </div>
+                    </div>
+
+                    <div class="connected-feed">
+                        <div class="feed-info">
+                            <span class="feed-name">Booking.com</span>
+                            <span class="feed-status active">
+                                <span class="feed-status-dot"></span>
+                                Active
+                            </span>
+                        </div>
+                        <div class="feed-actions">
+                            <button class="btn btn-ghost btn-sm" type="button">Sync Now</button>
+                            <button class="btn btn-danger-outline btn-sm" type="button">Remove</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div><!-- /.admin-content -->
+    </div><!-- /.admin-main -->
+
+    <script src="../js/app.js"></script>
+    <script src="../js/admin.js"></script>
+    <script>
+        // Sidebar Toggle
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const adminSidebar = document.getElementById('adminSidebar');
+        const adminMain = document.getElementById('adminMain');
+
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function () {
+                adminSidebar.classList.toggle('collapsed');
+                adminMain.classList.toggle('expanded');
+            });
+        }
+
+        // Tab Navigation
+        const tabs = document.querySelectorAll('#propertyTabs .tab');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabs.forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                const target = this.getAttribute('data-tab');
+
+                tabs.forEach(function (t) { t.classList.remove('active'); });
+                tabPanels.forEach(function (p) { p.classList.remove('active'); });
+
+                this.classList.add('active');
+                var panel = document.getElementById(target);
+                if (panel) {
+                    panel.classList.add('active');
+                }
+            });
+        });
+
+        // Upload Zone
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+
+        if (uploadZone && fileInput) {
+            uploadZone.addEventListener('click', function () {
+                fileInput.click();
+            });
+
+            uploadZone.addEventListener('dragover', function (e) {
+                e.preventDefault();
+                uploadZone.style.borderColor = 'var(--primary)';
+                uploadZone.style.background = 'var(--primary-light)';
+            });
+
+            uploadZone.addEventListener('dragleave', function () {
+                uploadZone.style.borderColor = 'var(--gray-300)';
+                uploadZone.style.background = 'var(--gray-50)';
+            });
+
+            uploadZone.addEventListener('drop', function (e) {
+                e.preventDefault();
+                uploadZone.style.borderColor = 'var(--gray-300)';
+                uploadZone.style.background = 'var(--gray-50)';
+                var files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    console.log('Dropped files:', files);
+                }
+            });
+
+            fileInput.addEventListener('change', function () {
+                if (this.files.length > 0) {
+                    console.log('Selected files:', this.files);
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
